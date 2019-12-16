@@ -1,0 +1,106 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Frequent Words</title>
+
+	<style>
+		th {text-align: left; padding: 5px 10px}
+		td {vertical-align: top; padding: 10px;}
+		tr:nth-child(even) {background: #EFEFEF}
+		tr:nth-child(odd) {background: #FFFFFF}
+
+		/* update: generate color classes dynamically */
+		.doc_0 {color: #E6194B;}
+		.doc_1 {color: #3CB44B;}
+		.doc_2 {color: #FFE119;}
+		.doc_3 {color: #4363D8;}
+		.doc_4 {color: #F58231;}
+		.doc_5 {color: #911EB4;}
+		.doc_6 {color: #46F0F0;}
+		.doc_7 {color: #F032E6;}
+		.doc_8 {color: #BCF60C;}
+		.doc_9 {color: #FABEBE;}
+		.doc_10 {color: #008080;}
+		.doc_11 {color: #E6BEFF;}
+		.doc_12 {color: #9A6324;}
+		.doc_13 {color: #FFFAC8;}
+		.doc_14 {color: #800000;}
+		.doc_15 {color: #AAFFC3;}
+		.doc_16 {color: #808000;}
+		.doc_17 {color: #FFD8B1;}
+		.doc_18 {color: #000075;}
+		.doc_19 {color: #808080;}
+
+		.sentence {padding: 2px 0;}
+		.sentence strong {color: #000000;}
+
+		.toggle {font-weight: bold; padding: 5px 0; cursor: pointer;}
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript" src="data.js"></script>
+	<script>
+		const table = `
+			<table>
+				<tr>
+					<th>Word</th>
+					<th>Frequency</th>
+					<th>Documents</th>
+					<th>Sentences</th>
+				</tr>
+				${data["frequent_words"].map(word =>
+					`<tr>
+						<td>
+							<strong>Root: </strong>${word.root}
+							<br />
+							<strong>Forms: </strong>${word.forms.map(form =>
+								`${form}`
+							).join(', ')}
+						</td>
+						<td>${word.frequency}</td>
+						<td>
+							${Object.keys(word.documents).map(doc_index =>
+								`<div class="doc_${doc_index}">${data["documents"][doc_index]}</div>`
+							).join('')}
+						</td>
+						<td>
+							${Object.keys(word.sentences).map(doc_index =>
+								`${word.sentences[doc_index].map(sentence_index =>
+									`<div class="sentence doc_${doc_index}">
+										${data["sentences"][sentence_index].replace(new RegExp(`\\b${word.forms.join("\\b|\\b")}\\b`, "gi"), function (x) {
+											return `<strong>${x}</strong>`;
+										})}
+									</div>`
+								).join('')}`
+							).join('')}
+							${word.num_sentences > 3 ? `<div class="toggle">Show more...</div>` : ''}
+						</td>
+					</tr>`
+				).join('')}
+			</table>
+		`;
+		$(function() {
+			$(document.body).html(table);
+			$('.sentence:nth-child(n + 4)').hide();
+			$('.toggle').on('click', function() {
+				if ($(this).html() == 'Show more...') {
+					$(this).siblings().show();
+					$(this).html('Show less...');
+				} else {
+					$('.sentence:nth-child(n + 4)', $(this).closest('td')).hide();
+					$(this).html('Show more...');
+				}
+			});
+		});
+	</script>
+</head>
+
+<body>
+
+</body>
+
+</html>
